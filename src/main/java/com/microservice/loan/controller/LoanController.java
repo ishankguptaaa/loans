@@ -1,28 +1,51 @@
 package com.microservice.loan.controller;
 
 import com.microservice.loan.constants.LoansConstants;
+import com.microservice.loan.dto.LoansDto;
 import com.microservice.loan.dto.ResponseDto;
 import com.microservice.loan.service.ILoansService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api",produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @RequiredArgsConstructor
 public class LoanController {
 
   private final ILoansService iLoansService;
 
   @PostMapping("/create")
-  public ResponseEntity<ResponseDto> createLoan(String mobileNumber){
+  public ResponseEntity<ResponseDto> createLoan(String mobileNumber) {
     iLoansService.createLoan(mobileNumber);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ResponseDto(LoansConstants.STATUS_201, LoansConstants.MESSAGE_201));
+  }
+
+  @GetMapping("/fetch")
+  public ResponseEntity<LoansDto> getLoans(String mobileNumber) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(iLoansService.fetchLoan(mobileNumber));
+  }
+
+  @PutMapping("/update")
+  public ResponseEntity<ResponseDto> updateLoans(@RequestBody LoansDto loansDto) {
+    var isUpdate = iLoansService.updateLoan(loansDto);
+    if (isUpdate) {
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ResponseDto(LoansConstants.STATUS_200, LoansConstants.MESSAGE_200));
+    } else {
+      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+          .body(new ResponseDto(LoansConstants.STATUS_417, LoansConstants.MESSAGE_417_UPDATE));
+
+    }
   }
 
 }

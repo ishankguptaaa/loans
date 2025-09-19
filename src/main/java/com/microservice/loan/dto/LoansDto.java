@@ -2,10 +2,12 @@ package com.microservice.loan.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class LoanDto {
+@NoArgsConstructor
+public class LoansDto {
 
   private String mobileNumber;
   private String loanNumber;
